@@ -15,4 +15,12 @@ export class Movie extends BaseEntity {
   @Field(() => Int)
   @Column('int', { default: 60 })
   minutes: number;
+
+  @Field()
+  @Column({ nullable: true })
+  firstName: string;
+
+  @Field()
+  @Column({ nullable: true })
+  lastName: string;
 }

@@ -8,6 +8,7 @@ import {
   Int
 } from 'type-graphql';
 import { Movie } from '../entity/Movie';
+import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 
 @InputType()
 class MovieInput {
@@ -16,6 +17,12 @@ class MovieInput {
 
   @Field(() => Int)
   minutes: number;
+
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
 }
 
 @InputType()
@@ -46,8 +53,28 @@ export class MovieResolver {
 
   // READ
   @Query(() => [Movie])
-  movies() {
+  allMovies() {
     return Movie.find();
+  }
+
+  @Query(() => Movie)
+  findMovieById(@Arg('id', () => Int) id: number) {
+    return Movie.findOne({ id });
+  }
+
+  @Query(() => Movie)
+  findMovieByTitle(@Arg('title') title: string) {
+    return Movie.findOne({ title });
+  }
+
+  @Query(() => [Movie])
+  findAllWhereMinutesAreGreaterThan(@Arg('minutes') minutes: number) {
+    return Movie.find({ minutes: MoreThanOrEqual(minutes) });
+  }
+
+  @Query(() => [Movie])
+  findAllWhereMinutesAreLessThan(@Arg('minutes') minutes: number) {
+    return Movie.find({ minutes: LessThanOrEqual(minutes) });
   }
 
   // UPDATE
@@ -75,6 +102,12 @@ export class MovieResolver {
   @Mutation(() => Boolean)
   async deleteMovie(@Arg('id', () => Int) id: number) {
     await Movie.delete({ id });
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async deleteAll(@Arg('id', () => [Int]) id: number[]) {
+    await Movie.delete(id);
     return true;
   }
 }
