@@ -101,7 +101,8 @@ export class MovieResolver {
     @Arg('input', () => MovieUpdateInput) input: MovieUpdateInput
   ) {
     await Movie.update({ id }, input);
-    return true;
+    // return true;
+    return Movie.findOne({ id });
   }
 
   // DELETE
