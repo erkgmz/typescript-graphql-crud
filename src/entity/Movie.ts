@@ -16,11 +16,11 @@ export class Movie extends BaseEntity {
   @Column('int', { default: 60 })
   minutes: number;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   firstName: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   lastName: string;
 }

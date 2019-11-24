@@ -18,11 +18,11 @@ class MovieInput {
   @Field(() => Int)
   minutes: number;
 
-  @Field({ nullable: true })
-  firstName?: string;
+  @Field(() => String, { nullable: true })
+  firstName: string;
 
-  @Field({ nullable: true })
-  lastName?: string;
+  @Field(() => String, { nullable: true })
+  lastName: string;
 }
 
 @InputType()
