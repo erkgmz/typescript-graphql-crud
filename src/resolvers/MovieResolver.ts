@@ -32,6 +32,12 @@ class MovieUpdateInput {
 
   @Field(() => Int, { nullable: true })
   minutes?: number;
+
+  @Field(() => String, { nullable: true })
+  firstName: string;
+
+  @Field(() => String, { nullable: true })
+  lastName: string;
 }
 
 @Resolver()
