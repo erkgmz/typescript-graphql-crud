@@ -26,33 +26,39 @@ import chalk from 'chalk';
   });
 
   app.get('/create', async (req, res) => {
-    if (req.query.title && req.query.minutes) {
-      const resolver = new MovieResolver();
-      const title = req.query.title;
-      const minutes = req.query.minutes;
-      const firstName = req.query.firstName || null;
-      const lastName = req.query.lastName || null;
-
-      await resolver
-        .createMovie({ title, minutes, firstName, lastName })
-        .then(movie => res.json({ movie }))
-        .catch(error => res.json({ error }));
+    if (!req.query.title || !req.query.minutes) {
+      res.json({ error: 'Mising Fields. Make sure TITLE and MINUTES are set' });
     }
+
+    const resolver = new MovieResolver();
+    const title = req.query.title;
+    const minutes = req.query.minutes;
+    const firstName = req.query.firstName || null;
+    const lastName = req.query.lastName || null;
+
+    await resolver
+      .createMovie({ title, minutes, firstName, lastName })
+      .then(movie => res.json({ movie }))
+      .catch(error => res.json({ error }));
   });
 
   app.get('/update', async (req, res) => {
-    if (req.query.id && req.query.firstName && req.query.lastName) {
-      const resolver = new MovieResolver();
-      const firstName = req.query.firstName;
-      const lastName = req.query.lastName;
-      const id = req.query.id;
-
-      await resolver
-        .findMovieById(id)
-        .then(async () => {
-          res.json(await resolver.updateMovie(id, { firstName, lastName }));
-        })
-        .catch(error => res.json({ error }));
+    if (!req.query.id && !req.query.firstName && !req.query.lastName) {
+      res.json({
+        error: 'Missing fields. Make sure ID, FIRST NAME and LAST NAME are set'
+      });
     }
+
+    const resolver = new MovieResolver();
+    const firstName = req.query.firstName;
+    const lastName = req.query.lastName;
+    const id = req.query.id;
+
+    await resolver
+      .findMovieById(id)
+      .then(async () =>
+        res.json(await resolver.updateMovie(id, { firstName, lastName }))
+      )
+      .catch(error => res.json({ error }));
   });
 })();
