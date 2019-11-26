@@ -53,15 +53,15 @@ import bodyParser from 'body-parser';
     }
 
     const resolver = new MovieResolver();
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
+    const firstName = req.body.firstName || null;
+    const lastName = req.body.lastName || null;
     const id = req.body.id;
 
     return await resolver
       .findMovieById(id)
-      .then(async () =>
-        res.json(await resolver.updateMovie(id, { firstName, lastName }))
-      )
+      .then(async () => {
+        res.json(await resolver.updateMovie(id, { firstName, lastName }));
+      })
       .catch(error => res.json({ error }));
   });
 
