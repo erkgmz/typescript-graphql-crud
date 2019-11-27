@@ -28,10 +28,10 @@ class MovieInput {
 @InputType()
 class MovieUpdateInput {
   @Field(() => String, { nullable: true })
-  title?: string;
+  title: string;
 
   @Field(() => Int, { nullable: true })
-  minutes?: number;
+  minutes: number;
 
   @Field(() => String, { nullable: true })
   firstName: string;
@@ -101,8 +101,7 @@ export class MovieResolver {
     @Arg('input', () => MovieUpdateInput) input: MovieUpdateInput
   ) {
     await Movie.update({ id }, input);
-    // return true;
-    return Movie.findOne({ id });
+    return true;
   }
 
   // DELETE

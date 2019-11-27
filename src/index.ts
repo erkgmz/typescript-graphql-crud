@@ -27,42 +27,48 @@ import bodyParser from 'body-parser';
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.post('/create', async (req, res) => {
-    if (!req.body.title || !req.body.minutes) {
-      return res.status(500).send({
-        error: 'Mising Fields. Make sure TITLE and MINUTES are set'
-      });
+    try {
+      const Resolver = new MovieResolver();
+      const { title, minutes, firstName = null, lastName = null } = req.body;
+      return await Resolver.createMovie({ title, minutes, firstName, lastName })
+        .then(movie => res.json({ movie }))
+        .catch(error => {
+          throw new Error(error.message);
+        });
+    } catch (error) {
+      const { message } = error;
+      return res.status(500).json({ message, hasError: true });
     }
-
-    const resolver = new MovieResolver();
-    const title = req.body.title;
-    const minutes = req.body.minutes;
-    const firstName = req.body.firstName || null;
-    const lastName = req.body.lastName || null;
-
-    return await resolver
-      .createMovie({ title, minutes, firstName, lastName })
-      .then(movie => res.json({ movie }))
-      .catch(error => res.json({ error }));
   });
 
   app.post('/update', async (req, res) => {
-    if (!req.body.id && !req.body.firstName && !req.body.lastName) {
-      return res.status(500).send({
-        error: 'Missing fields. Make sure ID, FIRST NAME and LAST NAME are set'
-      });
+    try {
+      const Resolver = new MovieResolver();
+      const {
+        id,
+        title,
+        minutes,
+        firstName = null,
+        lastName = null
+      } = req.body;
+      return await Resolver.findMovieById(id)
+        .then(async () => {
+          return res.json(
+            await Resolver.updateMovie(id, {
+              title,
+              minutes,
+              firstName,
+              lastName
+            })
+          );
+        })
+        .catch(error => {
+          throw new Error(error.message);
+        });
+    } catch (error) {
+      const { message } = error;
+      return res.status(500).json({ message, error: true });
     }
-
-    const resolver = new MovieResolver();
-    const firstName = req.body.firstName || null;
-    const lastName = req.body.lastName || null;
-    const id = req.body.id;
-
-    return await resolver
-      .findMovieById(id)
-      .then(async () => {
-        res.json(await resolver.updateMovie(id, { firstName, lastName }));
-      })
-      .catch(error => res.json({ error }));
   });
 
   app.listen(4000, () => {

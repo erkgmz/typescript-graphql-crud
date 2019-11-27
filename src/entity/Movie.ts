@@ -8,12 +8,12 @@ export class Movie extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column()
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
   title: string;
 
-  @Field(() => Int)
-  @Column('int', { default: 60 })
+  @Field(() => Int, { nullable: true })
+  @Column('int', { nullable: true })
   minutes: number;
 
   @Field(() => String, { nullable: true })
