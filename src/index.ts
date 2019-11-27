@@ -26,7 +26,7 @@ import bodyParser from 'body-parser';
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.get('/user/:id?', async (req, res) => {
+  app.get('/movie/:id?', async (req, res) => {
     try {
       const Resolver = new MovieResolver();
       const { id } = req.query;
