@@ -30,6 +30,7 @@ import bodyParser from 'body-parser';
     try {
       const Resolver = new MovieResolver();
       const { id } = req.query;
+      if (!id) throw new Error('No params');
       return await Resolver.findMovieById(id)
         .then(movie => res.send({ movie }))
         .catch(error => {
