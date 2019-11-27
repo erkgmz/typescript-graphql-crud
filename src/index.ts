@@ -26,6 +26,21 @@ import bodyParser from 'body-parser';
 
   apolloServer.applyMiddleware({ app, cors: false });
 
+  app.get('/user/:id?', async (req, res) => {
+    try {
+      const Resolver = new MovieResolver();
+      const { id } = req.query;
+      return await Resolver.findMovieById(id)
+        .then(movie => res.send({ movie }))
+        .catch(error => {
+          throw new Error(error.message);
+        });
+    } catch (error) {
+      const { message } = error;
+      return res.status(500).json({ message, hasError: true });
+    }
+  });
+
   app.post('/create', async (req, res) => {
     try {
       const Resolver = new MovieResolver();
