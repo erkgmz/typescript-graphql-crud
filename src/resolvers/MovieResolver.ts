@@ -43,14 +43,6 @@ class MovieUpdateInput {
 @Resolver()
 export class MovieResolver {
   // CREATE
-  // @Mutation(() => Movie)
-  // async createMovie(@Arg('options', () => MovieInput) options: MovieInput) {
-  //   await Movie.insert(options);
-  //   return true;
-  // }
-
-  // different way to do same thing
-  // CREATE
   @Mutation(() => Movie)
   async createMovie(@Arg('options', () => MovieInput) options: MovieInput) {
     const movie = await Movie.create(options).save();
@@ -84,17 +76,6 @@ export class MovieResolver {
   }
 
   // UPDATE
-  // using MovieInput - main drawback is that all fields in MovieInput must be set
-  // @Mutation(() => Boolean)
-  // async updateMovie(
-  //   @Arg('id', () => Int) id: number,
-  //   @Arg('input', () => MovieInput) input: MovieInput
-  // ) {
-  //   await Movie.update({ id }, input);
-  //   return true;
-  // }
-
-  // same update except specialized MovieUpdateInput where fields are optional
   @Mutation(() => Boolean)
   async updateMovie(
     @Arg('id', () => Int) id: number,

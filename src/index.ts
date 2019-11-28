@@ -26,6 +26,20 @@ import bodyParser from 'body-parser';
 
   apolloServer.applyMiddleware({ app, cors: false });
 
+  app.get('/movies', async (_req, res) => {
+    try {
+      const Resolver = new MovieResolver();
+      return await Resolver.allMovies()
+        .then(movie => res.json({ movie }))
+        .catch(error => {
+          throw new Error(error.message);
+        });
+    } catch (error) {
+      const { message } = error;
+      return res.status(500).json({ message, error: true });
+    }
+  });
+
   app.get('/movie/:id?', async (req, res) => {
     try {
       const Resolver = new MovieResolver();
@@ -38,7 +52,7 @@ import bodyParser from 'body-parser';
         });
     } catch (error) {
       const { message } = error;
-      return res.status(500).json({ message, hasError: true });
+      return res.status(500).json({ message, error: true });
     }
   });
 
@@ -53,7 +67,7 @@ import bodyParser from 'body-parser';
         });
     } catch (error) {
       const { message } = error;
-      return res.status(500).json({ message, hasError: true });
+      return res.status(500).json({ message, error: true });
     }
   });
 
