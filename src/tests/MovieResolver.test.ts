@@ -1,11 +1,24 @@
-import { MovieResolver, MovieInput } from '../resolvers/MovieResolver';
+import {
+  MovieResolver,
+  MovieInput,
+  MovieUpdateInput
+} from '../resolvers/MovieResolver';
+import { createConnection } from 'typeorm';
+
 const movieResolver = new MovieResolver();
 
 const movieInput: MovieInput = {
-  title: 'Test Title',
+  title: 'TestTitle',
   minutes: 90,
   firstName: 'TestFirst',
   lastName: 'TestLast'
+};
+
+const movieUpdateInput: MovieUpdateInput = {
+  title: 'UpdateTitle',
+  minutes: 90,
+  firstName: 'UpdateFirst',
+  lastName: 'UpdateLast'
 };
 
 describe('The MovieResolver', () => {
@@ -35,6 +48,15 @@ describe('The MovieResolver', () => {
           expect(typeof movie.minutes).toEqual('number');
         })
         .catch(error => error);
+    });
+  });
+
+  describe('when updating a movie', () => {
+    it('should return a boolean', async () => {
+      await createConnection();
+      await movieResolver.updateMovie(44, movieUpdateInput).then(isUpdated => {
+        expect(typeof isUpdated).toBe('boolean');
+      });
     });
   });
 });
