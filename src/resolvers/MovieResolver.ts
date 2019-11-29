@@ -11,7 +11,7 @@ import { Movie } from '../entity/Movie';
 import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 
 @InputType()
-class MovieInput {
+export class MovieInput {
   @Field()
   title: string;
 
@@ -26,7 +26,7 @@ class MovieInput {
 }
 
 @InputType()
-class MovieUpdateInput {
+export class MovieUpdateInput {
   @Field(() => String, { nullable: true })
   title: string;
 
