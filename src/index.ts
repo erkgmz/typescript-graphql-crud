@@ -1,3 +1,4 @@
+// TODO: implement authentication
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import express from 'express';
@@ -10,6 +11,7 @@ import bodyParser from 'body-parser';
 
 (async () => {
   const app = express();
+  const movieResolver = new MovieResolver();
 
   await createConnection();
 
@@ -20,17 +22,17 @@ import bodyParser from 'body-parser';
     context: ({ req, res }) => ({ req, res })
   });
 
+  apolloServer.applyMiddleware({ app, cors: false });
+
   app.use(bodyParser.urlencoded({ extended: true }));
 
   app.use(bodyParser.json());
 
-  apolloServer.applyMiddleware({ app, cors: false });
-
   app.get('/movies', async (_req, res) => {
     try {
-      const Resolver = new MovieResolver();
-      return await Resolver.allMovies()
-        .then(movie => res.json({ movie }))
+      return await movieResolver
+        .allMovies()
+        .then(movies => res.json({ movies }))
         .catch(error => {
           throw new Error(error.message);
         });
@@ -42,10 +44,10 @@ import bodyParser from 'body-parser';
 
   app.get('/movie/:id?', async (req, res) => {
     try {
-      const Resolver = new MovieResolver();
-      const { id } = req.query;
+      const id = req.query.id || req.params.id;
       if (!id) throw new Error('No params');
-      return await Resolver.findMovieById(id)
+      return await movieResolver
+        .findMovieById(id)
         .then(movie => res.send({ movie }))
         .catch(error => {
           throw new Error(error.message);
@@ -58,9 +60,9 @@ import bodyParser from 'body-parser';
 
   app.post('/create', async (req, res) => {
     try {
-      const Resolver = new MovieResolver();
       const { title, minutes, firstName = null, lastName = null } = req.body;
-      return await Resolver.createMovie({ title, minutes, firstName, lastName })
+      return await movieResolver
+        .createMovie({ title, minutes, firstName, lastName })
         .then(movie => res.json({ movie }))
         .catch(error => {
           throw new Error(error.message);
@@ -73,7 +75,6 @@ import bodyParser from 'body-parser';
 
   app.post('/update', async (req, res) => {
     try {
-      const Resolver = new MovieResolver();
       const {
         id,
         title,
@@ -81,10 +82,11 @@ import bodyParser from 'body-parser';
         firstName = null,
         lastName = null
       } = req.body;
-      return await Resolver.findMovieById(id)
+      return await movieResolver
+        .findMovieById(id)
         .then(async () => {
           return res.json(
-            await Resolver.updateMovie(id, {
+            await movieResolver.updateMovie(id, {
               title,
               minutes,
               firstName,
