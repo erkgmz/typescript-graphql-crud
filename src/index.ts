@@ -1,7 +1,7 @@
 // TODO: implement authentication
 import 'reflect-metadata';
 import { createConnection, getConnectionOptions } from 'typeorm';
-import express from 'express';
+import express, { Application, Request, Response } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { HelloWorldResolver } from './resolvers/HelloWorldResolver';
@@ -10,7 +10,7 @@ import chalk from 'chalk';
 import bodyParser from 'body-parser';
 
 (async () => {
-  const app = express();
+  const app: Application = express();
   const movieResolver = new MovieResolver();
   const dbOptions = await getConnectionOptions(
     process.env.NODE_ENV || 'development'
@@ -31,7 +31,7 @@ import bodyParser from 'body-parser';
 
   app.use(bodyParser.json());
 
-  app.get('/movies', async (_req, res) => {
+  app.get('/movies', async (_req: Request, res: Response) => {
     try {
       return await movieResolver
         .allMovies()
@@ -44,7 +44,7 @@ import bodyParser from 'body-parser';
     }
   });
 
-  app.get('/movie/:id?', async (req, res) => {
+  app.get('/movie/:id?', async (req: Request, res: Response) => {
     try {
       const id = req.query.id || req.params.id;
       if (!id) throw new Error('No params');
@@ -59,7 +59,7 @@ import bodyParser from 'body-parser';
     }
   });
 
-  app.post('/create', async (req, res) => {
+  app.post('/create', async (req: Request, res: Response) => {
     try {
       const { title, minutes, firstName = null, lastName = null } = req.body;
       return await movieResolver
@@ -73,7 +73,7 @@ import bodyParser from 'body-parser';
     }
   });
 
-  app.post('/update', async (req, res) => {
+  app.post('/update', async (req: Request, res: Response) => {
     try {
       const {
         id,
