@@ -3,7 +3,7 @@ import {
   MovieInput,
   MovieUpdateInput
 } from '../resolvers/MovieResolver';
-import { createConnection } from 'typeorm';
+import { createConnection, getConnectionOptions, Connection } from 'typeorm';
 
 const movieResolver = new MovieResolver();
 
@@ -12,13 +12,6 @@ const movieInput: MovieInput = {
   minutes: 90,
   firstName: 'TestFirst',
   lastName: 'TestLast'
-};
-
-const movieUpdateInput: MovieUpdateInput = {
-  title: 'UpdateTitle',
-  minutes: 90,
-  firstName: 'UpdateFirst',
-  lastName: 'UpdateLast'
 };
 
 describe('The MovieResolver', () => {
@@ -52,9 +45,31 @@ describe('The MovieResolver', () => {
   });
 
   describe('when updating a movie', () => {
+    let connection: Connection;
+
+    const movieUpdateInput: MovieUpdateInput = {
+      title: 'This is a Test Title',
+      minutes: 90,
+      firstName: 'TestUpdateFirst',
+      lastName: 'TestUpdateLast'
+    };
+
+    beforeEach(async () => {
+      const dbOptions = await getConnectionOptions('test');
+
+      connection = await createConnection({
+        ...dbOptions,
+        name: 'default',
+        logging: false
+      });
+    });
+
+    afterEach(async () => {
+      await connection.close();
+    });
+
     it('should return a boolean', async () => {
-      await createConnection();
-      await movieResolver.updateMovie(44, movieUpdateInput).then(isUpdated => {
+      await movieResolver.updateMovie(0, movieUpdateInput).then(isUpdated => {
         expect(typeof isUpdated).toBe('boolean');
       });
     });
