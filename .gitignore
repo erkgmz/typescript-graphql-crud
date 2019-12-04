@@ -1,2 +1,4 @@
 node_modules
+database.sqlitetest.data.base
 database.sqlite
+test.database.sqlite
