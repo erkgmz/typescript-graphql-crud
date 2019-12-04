@@ -5,10 +5,12 @@ import {
   Query,
   InputType,
   Field,
-  Int
+  Int,
+  Ctx
 } from 'type-graphql';
 import { Movie } from '../entity/Movie';
 import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
+import { Context } from '../graphql-types/Context';
 
 @InputType()
 export class MovieInput {
@@ -96,5 +98,11 @@ export class MovieResolver {
   async deleteAll(@Arg('id', () => [Int]) id: number[]) {
     await Movie.delete(id);
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async ctx(@Ctx() ctx: Context) {
+    const reqBody = ctx.req.body;
+    console.log('====================> ', reqBody);
   }
 }

@@ -1,6 +1,6 @@
 // TODO: implement authentication
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
+import { createConnection, getConnectionOptions } from 'typeorm';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
@@ -12,8 +12,11 @@ import bodyParser from 'body-parser';
 (async () => {
   const app = express();
   const movieResolver = new MovieResolver();
+  const dbOptions = await getConnectionOptions(
+    process.env.NODE_ENV || 'development'
+  );
 
-  await createConnection();
+  await createConnection({ ...dbOptions, name: 'default' });
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
@@ -37,8 +40,7 @@ import bodyParser from 'body-parser';
           throw new Error(error.message);
         });
     } catch (error) {
-      const { message } = error;
-      return res.status(500).json({ message, error: true });
+      return res.status(500).json({ error });
     }
   });
 
@@ -53,8 +55,7 @@ import bodyParser from 'body-parser';
           throw new Error(error.message);
         });
     } catch (error) {
-      const { message } = error;
-      return res.status(500).json({ message, error: true });
+      return res.status(500).json({ error });
     }
   });
 
@@ -68,8 +69,7 @@ import bodyParser from 'body-parser';
           throw new Error(error.message);
         });
     } catch (error) {
-      const { message } = error;
-      return res.status(500).json({ message, error: true });
+      return res.status(500).json({ error });
     }
   });
 
@@ -98,12 +98,12 @@ import bodyParser from 'body-parser';
           throw new Error(error.message);
         });
     } catch (error) {
-      const { message } = error;
-      return res.status(500).json({ message, error: true });
+      return res.status(500).json({ error });
     }
   });
 
-  app.listen(4000, () => {
-    console.log(chalk.green.bold('READY'));
+  const PORT = 4000;
+  app.listen(PORT, () => {
+    console.log(chalk.green.bold(`READY - listening on port:${PORT}`));
   });
 })();
